@@ -20,7 +20,7 @@ jobs:
         with:
           repository: kismetwireless/kismet
       - name: Install dependencies
-        run: sudo apt-get apt install -y build-essential git libwebsockets-dev pkg-config \
+        run: sudo apt-get install -y build-essential git libwebsockets-dev pkg-config \
             zlib1g-dev libnl-3-dev libnl-genl-3-dev libcap-dev libpcap-dev git \
             libnm-dev libdw-dev libsqlite3-dev libprotobuf-dev libprotobuf-c-dev \
             protobuf-compiler protobuf-c-compiler libsensors4-dev libusb-1.0-0-dev \
