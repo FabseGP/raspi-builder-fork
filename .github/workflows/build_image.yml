@@ -1,17 +1,35 @@
 on:
-  push
+  workflow_dispatch:
 
 jobs:
-  vm:
-    runs-on: ubuntu-latest
+  release:
+    name: Release - ${{ matrix.platform.os-name }}
+    strategy:
+      matrix:
+        platform:
+          - os-name: Linux-x86_64
+            runs-on: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os-name: Linux-aarch64
+            runs-on: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+    runs-on: ${{ matrix.platform.runs-on }}
     steps:
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-  container:
-    runs-on: ubuntu-latest
-    steps:
-      -
-        name: Run Docker Container
-        run: |
-          docker run --rm -v $PWD/output:/output ghcr.io/raspi-alpine/builder
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: sudo apt-get install -y mold clang
+      - name: Build binary
+        uses: houseabsolute/actions-rust-cross@v1
+        with:
+          command: "build"
+          target: ${{ matrix.platform.target }}
+          args: "--release"
+          toolchain: "nightly"
+      - name: Publish artifacts and release
+        uses: houseabsolute/actions-rust-release@v0
+        with:
+          executable-name: rust-kismet
+          extra-files: "config.toml.example"
+          changes-file: "CHANGELOG.md"
+          target: ${{ matrix.platform.target }}
