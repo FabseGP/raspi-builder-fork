@@ -31,7 +31,7 @@ jobs:
             librtlsdr-dev libubertooth-dev libbtbb-dev libmosquitto-dev gcc make gcc-aarch64-linux-gnu
       - name: Compile kismet
         run: |
-          ./configure
+          ./configure --build x86_64-pc-linux-gnu --host aarch64-linux-gnu LDFLAGS="-static -pthread" --enable-mpers=check
           make version
           make -j$(nproc)
       - name: Archive Release
