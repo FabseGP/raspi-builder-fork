@@ -1,0 +1,13 @@
+jobs:
+  vm:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+  container:
+    runs-on: ubuntu-latest
+    container: 
+      image: ghcr.io/raspi-alpine/builder
+      volume: 
+        - $PWD/output:/output
