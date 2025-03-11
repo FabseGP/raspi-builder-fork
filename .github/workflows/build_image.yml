@@ -1,3 +1,6 @@
+on:
+  push
+
 jobs:
   vm:
     runs-on: ubuntu-latest
@@ -9,5 +12,5 @@ jobs:
     runs-on: ubuntu-latest
     container: 
       image: ghcr.io/raspi-alpine/builder
-      volume: 
+      volumes: 
         - $PWD/output:/output
