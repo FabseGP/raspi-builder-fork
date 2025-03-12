@@ -57,12 +57,12 @@ jobs:
           else
             cmake .. \
               -DLWS_WITH_CLIENT=1 \
-              -DLWS_WITH_SSL=0 \
               -DCMAKE_INSTALL_PREFIX=/usr/local
           fi
           make -j$(nproc)
           sudo make install
           sudo ldconfig
+          nm /usr/local/lib/libwebsockets.a | grep lws_client_connect_via_info 
       - name: Checkout kismet
         uses: actions/checkout@v4
         with:
