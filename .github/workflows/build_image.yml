@@ -28,7 +28,6 @@ jobs:
             if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
               sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu
             fi
-            sudo apt remove -y libwebsockets-dev
       - name: Checkout openssl (non-x86_64 targets)
         if: matrix.platform.target == 'aarch64-unknown-linux-gn'
         uses: actions/checkout@v4
@@ -70,6 +69,10 @@ jobs:
           repository: kismetwireless/kismet
       - name: Compile kismet
         run: |
+          if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
+            export CFLAGS="--sysroot=/usr/aarch64-linux-gnu -I/usr/local/include"
+            export LDFLAGS="--sysroot=/usr/aarch64-linux-gnu -L/usr/local/lib -lwebsockets"
+          fi
           export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
           if [[ "${{ matrix.platform.target }}" == "x86_64-unknown-linux-gnu" ]]; then
             ./configure
