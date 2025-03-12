@@ -69,15 +69,11 @@ jobs:
           repository: kismetwireless/kismet
       - name: Compile kismet
         run: |
-          if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
-            export CFLAGS="--sysroot=/usr/aarch64-linux-gnu -I/usr/local/include"
-            export LDFLAGS="--sysroot=/usr/aarch64-linux-gnu -L/usr/local/lib -lwebsockets"
-          fi
           export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
           if [[ "${{ matrix.platform.target }}" == "x86_64-unknown-linux-gnu" ]]; then
             ./configure
           else
-            ./configure --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }}
+            ./configure --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} LDFLAGS="-static -pthread" --enable-mpers=check
           fi
           make version
           make -j$(nproc)
