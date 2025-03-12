@@ -28,6 +28,7 @@ jobs:
             if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
               sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu
             fi
+            sudo apt remove -y libwebsockets-dev
       - name: Checkout openssl (non-x86_64 targets)
         if: matrix.platform.target == 'aarch64-unknown-linux-gn'
         uses: actions/checkout@v4
