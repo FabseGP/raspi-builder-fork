@@ -52,6 +52,7 @@ jobs:
           if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
             cmake .. -DCMAKE_TOOLCHAIN_FILE=../contrib/cross-aarch64.cmake \
               -DLWS_WITH_CLIENT=1 \
+              -DLWS_WITHOUT_EXTENSIONS=1 \
               -DCMAKE_INSTALL_PREFIX=/usr/local \
               -DOPENSSL_ROOT_DIR=/opt/aarch64-openssl \
               -DOPENSSL_INCLUDE_DIR=/opt/aarch64-openssl/include \
@@ -75,7 +76,7 @@ jobs:
           if [[ "${{ matrix.platform.target }}" == "x86_64-unknown-linux-gnu" ]]; then
             ./configure
           else
-            ./configure --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} -DLWS_WITHOUT_EXTENSIONS=1
+            ./configure --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }}
           fi
           make version
           make -j$(nproc)
