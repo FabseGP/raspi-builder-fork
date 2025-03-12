@@ -27,7 +27,6 @@ jobs:
               librtlsdr-dev libubertooth-dev libbtbb-dev libmosquitto-dev gcc make zlib1g-dev
             if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
               sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu
-              sudo apt-get remove -y openssl libssl-dev
             fi
       - name: Checkout openssl (non-x86_64 targets)
         if: matrix.platform.target == 'aarch64-unknown-linux-gnu'
@@ -57,6 +56,7 @@ jobs:
               -DOPENSSL_INCLUDE_DIR=/opt/aarch64-openssl/include \
               -DOPENSSL_SSL_LIBRARY=/opt/aarch64-openssl/lib/libssl.a \
               -DOPENSSL_CRYPTO_LIBRARY=/opt/aarch64-openssl/lib/libcrypto.a \
+              -DDISABLE_WERROR=ON \
               -DCMAKE_INSTALL_PREFIX=/usr/local
           else
             cmake .. -DLWS_WITH_CLIENT=1 \
