@@ -52,11 +52,8 @@ jobs:
           if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
             cmake .. -DCMAKE_TOOLCHAIN_FILE=../contrib/cross-aarch64.cmake \
               -DLWS_WITH_CLIENT=1 \
-              -DOPENSSL_ROOT_DIR=/opt/aarch64-openssl \
-              -DOPENSSL_INCLUDE_DIR=/opt/aarch64-openssl/include \
-              -DOPENSSL_SSL_LIBRARY=/opt/aarch64-openssl/lib/libssl.a \
-              -DOPENSSL_CRYPTO_LIBRARY=/opt/aarch64-openssl/lib/libcrypto.a \
-              -DDISABLE_WERROR=ON \
+              -DLWS_OPENSSL_INCLUDE_DIRS=/opt/aarch-openssl/include \
+              -DLWS_OPENSSL_LIBRARIES="/opt/aarch64-openssl/lib/libcrypto.a;/opt/aarch64-openssl/lib/libcrypto.a" \
               -DCMAKE_INSTALL_PREFIX=/usr/local
           else
             cmake .. -DLWS_WITH_CLIENT=1 \
