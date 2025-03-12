@@ -36,7 +36,9 @@ jobs:
       - name: Compile openssl (non-x86_64 targets)
         if: matrix.platform.target == 'aarch64-unknown-linux-gnu'
         run: |
-          ./Configure linux-aarch64
+          ./Configure linux-aarch64 \
+            --prefix=/opt/aarch64-openssl \
+            --cross-compile-prefix=aarch64-linux-gnu-
           make -j$(nproc)
           sudo make install
       - name: Checkout libwebsockets
@@ -50,16 +52,18 @@ jobs:
           if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
             cmake .. -DCMAKE_TOOLCHAIN_FILE=../contrib/cross-aarch64.cmake \
               -DLWS_WITH_CLIENT=1 \
+              -DOPENSSL_ROOT_DIR=/opt/aarch64-openssl \
+              -DOPENSSL_INCLUDE_DIR=/opt/aarch64-openssl/include \
+              -DOPENSSL_SSL_LIBRARY=/opt/aarch64-openssl/lib/libssl.a \
+              -DOPENSSL_CRYPTO_LIBRARY=/opt/aarch64-openssl/lib/libcrypto.a \
               -DCMAKE_INSTALL_PREFIX=/usr/local
           else
-            cmake .. \
-              -DLWS_WITH_CLIENT=1 \
+            cmake .. -DLWS_WITH_CLIENT=1 \
               -DCMAKE_INSTALL_PREFIX=/usr/local
           fi
           make -j$(nproc)
           sudo make install
           sudo ldconfig
-          nm /usr/local/lib/libwebsockets.a | grep lws_client_connect_via_info 
       - name: Checkout kismet
         uses: actions/checkout@v4
         with:
