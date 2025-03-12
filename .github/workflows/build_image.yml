@@ -26,7 +26,8 @@ jobs:
               python3-numpy python3-serial python3-usb python3-dev python3-websockets \
               librtlsdr-dev libubertooth-dev libbtbb-dev libmosquitto-dev gcc make zlib1g-dev
             if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
-              sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu
+              sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gn
+              sudo apt-get remove -y openssl libssl-dev
             fi
       - name: Checkout openssl (non-x86_64 targets)
         if: matrix.platform.target == 'aarch64-unknown-linux-gnu'
