@@ -51,9 +51,9 @@ jobs:
         run: |
           export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
           if [[ "${{ matrix.platform.target }}" == "x86_64-unknown-linux-gnu" ]]; then
-            ./configure LDFLAGS="-static -pthread"
+            ./configure
           else
-            ./configure --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} LDFLAGS="-static -pthread" --enable-mpers=check
+            ./configure --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }}
           fi
           make version
           make -j$(nproc)
