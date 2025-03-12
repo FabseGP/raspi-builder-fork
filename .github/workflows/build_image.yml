@@ -37,7 +37,7 @@ jobs:
           mkdir build
           cd build
           if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
-            cmake .. -DCMAKE_TOOLCHAIN_FILE=../contrib/cross-aarch64.cmake -DLWS_WITH_SSL=0 -DLWS_WITH_CLIENT=1 -DCMAKE_INSTALL_PREFIX=/usr/local
+            cmake .. -DCMAKE_TOOLCHAIN_FILE=../contrib/cross-aarch64.cmake -DLWS_WITH_CLIENT=1 -DCMAKE_INSTALL_PREFIX=/usr/local
           else
             cmake .. -DLWS_WITH_CLIENT=1 -DCMAKE_INSTALL_PREFIX=/usr/local
           fi
