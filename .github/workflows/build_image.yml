@@ -54,6 +54,7 @@ jobs:
               -DLWS_WITH_CLIENT=1 \
               -DLWS_OPENSSL_INCLUDE_DIRS=/opt/aarch-openssl/include \
               -DLWS_OPENSSL_LIBRARIES="/opt/aarch64-openssl/lib/libcrypto.a;/opt/aarch64-openssl/lib/libcrypto.a" \
+              -DLWS_OPENSSL_ROOT_DIR=/opt/aarch-openssl \
               -DCMAKE_INSTALL_PREFIX=/usr/local
           else
             cmake .. -DLWS_WITH_CLIENT=1 \
