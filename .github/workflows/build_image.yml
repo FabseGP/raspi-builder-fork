@@ -15,10 +15,6 @@ jobs:
             target: aarch64-unknown-linux-gnu
     runs-on: ${{ matrix.platform.runs-on }}
     steps:
-      - name: Checkout libwebsockets
-        uses: actions/checkout@v4
-        with:
-          repository: warmcat/libwebsockets
       - name: Install dependencies
         run: |
             sudo apt-get update
@@ -32,17 +28,38 @@ jobs:
             if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
               sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu
             fi
+      - name: Checkout openssl (non-x86_64 targets)
+        uses: actions/checkout@v4
+        with:
+          repository: openssl/openssl
+      - name: Compile openssl (non-x86_64 targets)
+        run: |
+          ./Configure linux-aarch64 \
+            --prefix=/opt/aarch64-openssl \
+            --cross-compile-prefix=aarch64-linux-gnu-
+          make -j$(nproc)
+          sudo make install
+      - name: Checkout libwebsockets
+        uses: actions/checkout@v4
+        with:
+          repository: warmcat/libwebsockets
       - name: Compile libwebsockets
         run: |
           mkdir build
           cd build
           if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
-            cmake .. -DCMAKE_TOOLCHAIN_FILE=../contrib/cross-aarch64.cmake -DLWS_WITH_CLIENT=1 -DCMAKE_INSTALL_PREFIX=/usr/local
+            cmake .. -DCMAKE_TOOLCHAIN_FILE=../contrib/cross-aarch64.cmake \
+              -DLWS_WITH_CLIENT=1 \
+              -DCMAKE_INSTALL_PREFIX=/usr/local \
+              -DOPENSSL_ROOT_DIR=/opt/aarch64-openssl
           else
-            cmake .. -DLWS_WITH_CLIENT=1 -DCMAKE_INSTALL_PREFIX=/usr/local
+            cmake .. \
+              -DLWS_WITH_CLIENT=1 \
+              -DCMAKE_INSTALL_PREFIX=/usr/local
           fi
-          make
+          make -j$(nproc)
           sudo make install
+          sudo ldconfig
       - name: Checkout kismet
         uses: actions/checkout@v4
         with:
