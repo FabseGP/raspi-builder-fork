@@ -49,6 +49,7 @@ jobs:
           repository: kismetwireless/kismet
       - name: Compile kismet
         run: |
+          export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
           if [[ "${{ matrix.platform.target }}" == "x86_64-unknown-linux-gnu" ]]; then
             ./configure LDFLAGS="-static -pthread"
           else
