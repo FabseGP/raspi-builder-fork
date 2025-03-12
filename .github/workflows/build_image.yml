@@ -29,16 +29,14 @@ jobs:
               sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu
             fi
       - name: Checkout openssl (non-x86_64 targets)
-        if: matrix.platform.target == 'aarch64-unknown-linux-gn'
+        if: matrix.platform.target == 'aarch64-unknown-linux-gnu'
         uses: actions/checkout@v4
         with:
           repository: openssl/openssl
       - name: Compile openssl (non-x86_64 targets)
-        if: matrix.platform.target == 'aarch64-unknown-linux-gn'
+        if: matrix.platform.target == 'aarch64-unknown-linux-gnu'
         run: |
-          ./Configure linux-aarch64 \
-            --prefix=/opt/aarch64-openssl \
-            --cross-compile-prefix=aarch64-linux-gnu-
+          ./Configure linux-aarch64
           make -j$(nproc)
           sudo make install
       - name: Checkout libwebsockets
@@ -52,7 +50,6 @@ jobs:
           if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-gnu" ]]; then
             cmake .. -DCMAKE_TOOLCHAIN_FILE=../contrib/cross-aarch64.cmake \
               -DLWS_WITH_CLIENT=1 \
-              -DLWS_WITH_SSL=0 \
               -DCMAKE_INSTALL_PREFIX=/usr/local
           else
             cmake .. \
