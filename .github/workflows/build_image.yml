@@ -53,7 +53,9 @@ jobs:
             cmake .. -DCMAKE_TOOLCHAIN_FILE=../contrib/cross-aarch64.cmake \
               -DLWS_WITH_CLIENT=1 \
               -DCMAKE_INSTALL_PREFIX=/usr/local \
-              -DOPENSSL_ROOT_DIR=/opt/aarch64-openssl
+              -DOPENSSL_ROOT_DIR=/opt/aarch64-openssl \
+              -DOPENSSL_INCLUDE_DIR=/opt/aarch64-openssl/include \
+              -DOPENSSL_CRYPTO_LIBRARY=/opt/aarch64-openssl/lib/libcrypto.a
           else
             cmake .. \
               -DLWS_WITH_CLIENT=1 \
