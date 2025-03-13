@@ -45,4 +45,5 @@ jobs:
         with:
           artifacts: "release.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit: master
+          tag: v0.0.1
+          allowUpdates: true
