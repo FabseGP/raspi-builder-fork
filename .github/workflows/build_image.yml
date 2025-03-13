@@ -63,7 +63,7 @@ jobs:
             export PKG_CONFIG_LIBDIR=$SYSROOT/usr/lib/pkgconfig
             export CC=aarch64-linux-gnu-gcc
             export CXX=aarch64-linux-gnu-g++
-            nm $SYSROOT/usr/lib/libwebsockets.a | grep lws_client_connect_via_info
+            ls $SYSROOT
             ./configure --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} \
               CFLAGS="--sysroot=$SYSROOT" \
               LDFLAGS="--sysroot=$SYSROOT -static -pthread" \
