@@ -40,7 +40,7 @@ jobs:
             ./configure
           else
             sed -i '1i #include <stdio.h>' capture_sdr_rtladsb_v2/capture_sdr_rtladsb_v2.c
-            sed -i 's/-Wno-dangling-reference//g; s/-Wno-unknown-warning-option//g' Makefile
+            sed -i 's/-Wno-dangling-reference//g; s/-Wno-unknown-warning-option//g' Makefile.inc.in
             ./configure --disable-libwebsockets --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} 
           fi
           make version
