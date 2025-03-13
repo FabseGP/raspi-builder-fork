@@ -30,23 +30,6 @@ jobs:
           elif [[ "${{ matrix.platform.target }}" == "x86_64-unknown-linux-gnu" ]]; then
             sudo apt-get install -y libwebsockets-dev
           fi
-      - name: Checkout libwebsockets
-        if: matrix.platform.target == 'aarch64-unknown-linux-gnu'
-        uses: actions/checkout@v4
-        with:
-          repository: warmcat/libwebsockets
-      - name: Compile libwebsockets
-        if: matrix.platform.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          mkdir build
-          cd build
-          cmake .. \
-            -DLWS_WITH_CLIENT=1 \
-            -DLWS_WITH_SSL=0 \
-            -DCMAKE_INSTALL_PREFIX=$HOME/aarch64-sysroot
-          make -j$(nproc)
-          sudo make install DESTDIR=$HOME/aarch64-sysroot
-          sudo ldconfig
       - name: Checkout kismet
         uses: actions/checkout@v4
         with:
@@ -56,10 +39,7 @@ jobs:
           if [[ "${{ matrix.platform.target }}" == "x86_64-unknown-linux-gnu" ]]; then
             ./configure
           else
-            ./configure --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} \
-              LDFLAGS="-static -pthread" \
-              libwebsockets_CFLAGS="-I$HOME/aarch64-sysroot/usr/include" \
-              libwebsockets_LIBS="-L$HOME/aarch64-sysroot/usr/lib -lwebsockets"
+            ./configure --disable-libwebsockets --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} 
           fi
           make version
           make -j$(nproc)
