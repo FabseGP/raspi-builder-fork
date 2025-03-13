@@ -54,13 +54,15 @@ jobs:
           repository: kismetwireless/kismet
       - name: Compile kismet
         run: |
-          export PKG_CONFIG_PATH=$HOME/libwebsockets/lib/pkgconfig:$PKG_CONFIG_PATH
-          export CPPFLAGS="-I$HOME/libwebsockets/include"
-          export LDFLAGS="-L$HOME/libwebsockets/lib"
           if [[ "${{ matrix.platform.target }}" == "x86_64-unknown-linux-gnu" ]]; then
             ./configure
           else
-            ./configure --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} LDFLAGS="-static -pthread" --enable-mpers=check
+            export PKG_CONFIG_PATH=$HOME/libwebsockets/lib/pkgconfig:$PKG_CONFIG_PATH
+            export CPPFLAGS="-I$HOME/libwebsockets/include"
+            export libwebsockets_CFLAGS="-I$HOME/libwebsockets/include"
+            export LDFLAGS="-L$HOME/libwebsockets/lib -static -pthread"
+            export libwebsockets_LIBS="-L$HOME/libwebsockets/lib"
+            ./configure --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} 
           fi
           make version
           make -j$(nproc)
