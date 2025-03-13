@@ -44,7 +44,7 @@ jobs:
             -DLWS_WITH_CLIENT=1 \
             -DLWS_WITH_SSL=0 \
             -DCMAKE_INSTALL_PREFIX=$HOME/libwebsockets \
-            -DCMAKE_INSTALL_PREFIX=$HOME/aarch64-sysroot/usr
+            -DCMAKE_INSTALL_PREFIX=$HOME/aarch64-sysroot
           make -j$(nproc)
           sudo make install DESTDIR=$HOME/aarch64-sysroot
           sudo ldconfig
@@ -57,18 +57,14 @@ jobs:
           if [[ "${{ matrix.platform.target }}" == "x86_64-unknown-linux-gnu" ]]; then
             ./configure
           else
-            export SYSROOT=$HOME/aarch64-sysroot
-            export PKG_CONFIG_PATH=$SYSROOT/usr/lib/pkgconfig
-            export PKG_CONFIG_SYSROOT_DIR=$SYSROOT
-            export PKG_CONFIG_LIBDIR=$SYSROOT/usr/lib/pkgconfig
+            export PKG_CONFIG_PATH=$HOME/aarch64-sysroot/usr/lib/pkgconfig:$PKG_CONFIG_PATH
+            export PKG_CONFIG_LIBDIR=$HOME/aarch64-sysroot/usr/lib/pkgconfig:$PKG_CONFIG_LIBDIR
             export CC=aarch64-linux-gnu-gcc
             export CXX=aarch64-linux-gnu-g++
-            ls $SYSROOT
             ./configure --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} \
-              CFLAGS="--sysroot=$SYSROOT" \
-              LDFLAGS="--sysroot=$SYSROOT -static -pthread" \
-              libwebsockets_CFLAGS="-I$SYSROOT/usr/include" \
-              libwebsockets_LIBS="-L$SYSROOT/usr/lib -lwebsockets"
+              LDFLAGS="-static -pthread" \
+              libwebsockets_CFLAGS="-I$HOME/aarch64-sysroot/usr/include" \
+              libwebsockets_LIBS="-L$HOME/aarch64-sysroot/usr/lib -lwebsockets"
           fi
           make version
           make -j$(nproc)
