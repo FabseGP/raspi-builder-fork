@@ -30,7 +30,7 @@ jobs:
           elif [[ "${{ matrix.platform.target }}" == "x86_64-unknown-linux-gnu" ]]; then
             sudo apt-get install -y libwebsockets-dev
           fi
-      - name: Checkout kismet
+      - name: Checkout Kismet
         uses: actions/checkout@v4
         with:
           repository: kismetwireless/kismet
@@ -39,6 +39,8 @@ jobs:
           if [[ "${{ matrix.platform.target }}" == "x86_64-unknown-linux-gnu" ]]; then
             ./configure
           else
+            sed -i '1i #include <stdio.h>' capture_sdr_rtladsb_v2/capture_sdr_rtladsb_v2.c
+            sed -i 's/-Wno-dangling-reference//g; s/-Wno-unknown-warning-option//g' Makefile
             ./configure --disable-libwebsockets --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} 
           fi
           make version
