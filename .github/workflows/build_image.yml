@@ -1,5 +1,7 @@
-on:
-  push
+on: 
+  push:
+    tags:
+    - '*'
 
 permissions:
   contents: write
@@ -29,16 +31,16 @@ jobs:
             python3-numpy python3-serial python3-usb python3-dev python3-websockets \
             librtlsdr-dev libubertooth-dev libbtbb-dev libmosquitto-dev gcc make zlib1g-dev
           if [[ "${{ matrix.platform.target }}" == "aarch64-linux-gnu" ]]; then
-            sudo dpkg --add-architecture aarch64
+            sudo dpkg --add-architecture arm64
             sudo apt-get update
-            sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu zlib1g-dev:aarch64
+            sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu zlib1g-dev:arm64
           elif [[ "${{ matrix.platform.target }}" == "x86_64-linux-gnu" ]]; then
             sudo apt-get install -y libwebsockets-dev
           fi
       - name: Checkout Kismet
         uses: actions/checkout@v4
         with:
-          repository: kismetwireless/kismet
+          ref: kismet-fork
       - name: Compile kismet
         run: |
           if [[ "${{ matrix.platform.target }}" == "x86_64-linux-gnu" ]]; then
