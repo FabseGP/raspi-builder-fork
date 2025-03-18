@@ -1,5 +1,6 @@
-on: 
+on:
   push
+
 
 permissions:
   contents: write
@@ -14,40 +15,45 @@ jobs:
             runs-on: ubuntu-latest
             target: x86_64-linux-gnu
           - os-name: Linux-aarch64
-            runs-on: ubuntu-latest
+            runs-on: ubuntu-24.04-arm
             target: aarch64-linux-gnu
+          - os-name: Linux-armhf
+            runs-on: ubuntu-24.04-arm
+            target: arm-linux-gnueabihf
     runs-on: ${{ matrix.platform.runs-on }}
     steps:
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential git pkg-config \
-            zlib1g-dev libnl-3-dev libnl-genl-3-dev libcap-dev libpcap-dev \
-            libnm-dev libdw-dev libsqlite3-dev libprotobuf-dev libprotobuf-c-dev \
-            protobuf-compiler protobuf-c-compiler libsensors-dev libusb-1.0-0-dev \
-            python3 python3-setuptools python3-protobuf python3-requests zlib1g \
-            python3-numpy python3-serial python3-usb python3-dev python3-websockets \
-            librtlsdr-dev libubertooth-dev libbtbb-dev libmosquitto-dev gcc make zlib1g-dev
-          if [[ "${{ matrix.platform.target }}" == "aarch64-linux-gnu" ]]; then
-            sudo dpkg --add-architecture arm64
+          if [[ "${{ matrix.platform.target }}" == "arm-linux-gnueabihf" ]]; then
+            cat /etc/apt/sources.list
+            sudo dpkg --add-architecture armhf
+            echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports jammy main universe" | sudo tee /etc/apt/sources.list.d/armhf.list
             sudo apt-get update
-            sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu zlib1g-dev:arm64
-          elif [[ "${{ matrix.platform.target }}" == "x86_64-linux-gnu" ]]; then
-            sudo apt-get install -y libwebsockets-dev
+            sudo apt-get install -y build-essential git pkg-config libwebsockets-dev \
+              zlib1g-dev libnl-3-dev libnl-genl-3-dev libcap-dev libpcap-dev \
+              libnm-dev libdw-dev libsqlite3-dev libprotobuf-dev libprotobuf-c-dev \
+              protobuf-compiler protobuf-c-compiler libsensors-dev libusb-1.0-0-dev \
+              python3 python3-setuptools python3-protobuf python3-requests zlib1g \
+              python3-numpy python3-serial python3-usb python3-dev python3-websockets \
+              librtlsdr-dev libubertooth-dev libbtbb-dev libmosquitto-dev gcc make zlib1g-dev \
+              gcc-arm-linux-gnueabihf
+          else 
+            sudo apt-get update
+            sudo apt-get install -y build-essential git pkg-config libwebsockets-dev \
+              zlib1g-dev libnl-3-dev libnl-genl-3-dev libcap-dev libpcap-dev \
+              libnm-dev libdw-dev libsqlite3-dev libprotobuf-dev libprotobuf-c-dev \
+              protobuf-compiler protobuf-c-compiler libsensors-dev libusb-1.0-0-dev \
+              python3 python3-setuptools python3-protobuf python3-requests zlib1g \
+              python3-numpy python3-serial python3-usb python3-dev python3-websockets \
+              librtlsdr-dev libubertooth-dev libbtbb-dev libmosquitto-dev gcc make zlib1g-dev
           fi
       - name: Checkout Kismet
         uses: actions/checkout@v4
         with:
-          ref: kismet-fork
+          repository: kismetwireless/kismet
       - name: Compile kismet
         run: |
-          if [[ "${{ matrix.platform.target }}" == "x86_64-linux-gnu" ]]; then
-            ./configure
-          else
-            sed -i '1i #include <stdio.h>' capture_sdr_rtladsb_v2/capture_sdr_rtladsb_v2.c
-            sed -i 's/-Wno-dangling-reference//g; s/-Wno-unknown-warning-option//g' Makefile.inc.in
-            ./configure --disable-libwebsockets --build x86_64-pc-linux-gnu --host ${{ matrix.platform.target }} 
-          fi
+          ./configure --host=${{ matrix.platform.target }}
           make version
           make -j$(nproc)
       - name: Archive Release
@@ -64,5 +70,3 @@ jobs:
           allowUpdates: true
           generateReleaseNotes: true
           replacesArtifacts: true
-
-
