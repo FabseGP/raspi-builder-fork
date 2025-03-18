@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           if [[ "${{ matrix.platform.target }}" == "arm-linux-gnueabihf" ]]; then
-            cat /etc/apt/sources.list
+            cat /etc/apt/sources.list.d/ubuntu.sources
             sudo dpkg --add-architecture armhf
             echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports jammy main universe" | sudo tee /etc/apt/sources.list.d/armhf.list
             sudo apt-get update
