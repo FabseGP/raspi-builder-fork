@@ -26,7 +26,8 @@ jobs:
         run: |
           if [[ "${{ matrix.platform.target }}" == "arm-linux-gnueabihf" ]]; then
             sudo dpkg --add-architecture armhf
-            echo "Types: deb
+            echo "
+              Types: deb
               URIs: http://ports.ubuntu.com/ubuntu-ports
               Suites: noble noble-updates noble-backports
               Components: main universe restricted multiverse
